@@ -67,12 +67,12 @@ def make_effector(rule):
         # This code is called by graph(state) and runs millions of times
         # Tip: Do something with rule['Produces'] and rule['Consumes'].
         next_state = state.copy
-        for item,value in rule['Produces']:
+        for item,value in rule['Consumes']:
             if item in next_state:
                 next_state[item] -= value
                 if next_state[item] == 0:
                     del next_state[item]
-        for item,value in rule['Consumes']:
+        for item,value in rule['Produces']:
             if item in next_state:
                 next_state[item] += value
             else:
