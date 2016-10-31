@@ -109,6 +109,16 @@ def graph(state):
 
 def heuristic(state):
     # Implement your heuristic here!
+    pickaxes = 0
+    for item,value in state:
+        if item[len(item)-3:] == 'axe' and value > 1:
+            return 999
+        elif item == 'bench' and value > 1:
+            return 999
+        elif item == 'cart' and value > 1:
+            return 999
+        elif item == 'furnace' and value > 1:
+            return 999
     return 0
 
 def search(graph, state, is_goal, limit, heuristic):
