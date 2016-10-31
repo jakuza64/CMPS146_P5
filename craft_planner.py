@@ -109,7 +109,6 @@ def graph(state):
 
 def heuristic(state):
     # Implement your heuristic here!
-    pickaxes = 0
     for item,value in state:
         if item[len(item)-3:] == 'axe' and value > 1:
             return 999
@@ -130,7 +129,10 @@ def search(graph, state, is_goal, limit, heuristic):
     # representing the path. Each element (tuple) of the list represents a state
     # in the path and the action that took you to this state
     while time() - start_time < limit:
-        pass
+        gen = graph(state)
+        for i in gen:
+            print(i)
+
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
