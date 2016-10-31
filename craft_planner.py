@@ -41,18 +41,20 @@ def make_checker(rule):
     def check(state):
         # This code is called by graph(state) and runs millions of times.
         # Tip: Do something with rule['Consumes'] and rule['Requires'].
-        for item,value in rule['Consumes']:
-            state_item = state.get(item)
-            if state_item is None:
-                return False
-            elif state_item < value:
-                return False
-        for elem,value in rule['Requires']:
-            state_elem = state.get(elem)
-            if state_elem is None:
-                return False
-            elif state_elem < value:
-                return False
+        if rule.get('Consumes') != None:
+            for item,value in rule['Consumes'].items():
+                state_item = state.get(item)
+                if state_item is None:
+                    return False
+                elif state_item < value:
+                    return False
+        if rule.get('Requires') != None:
+            for elem,value in rule['Requires'].items():
+                state_elem = state.get(elem)
+                if state_elem is None:
+                    return False
+                elif state_elem < value:
+                    return False
         return True
 
     return check
@@ -67,16 +69,18 @@ def make_effector(rule):
         # This code is called by graph(state) and runs millions of times
         # Tip: Do something with rule['Produces'] and rule['Consumes'].
         next_state = state.copy
-        for item,value in rule['Consumes']:
-            if item in next_state:
-                next_state[item] -= value
-                if next_state[item] == 0:
-                    del next_state[item]
-        for item,value in rule['Produces']:
-            if item in next_state:
-                next_state[item] += value
-            else:
-                next_state[item] = value
+        if rule.get('Consumes') != None:
+            for item,value in rule['Consumes'].items():
+                if item in next_state:
+                    next_state[item] -= value
+                    if next_state[item] == 0:
+                        del next_state[item]
+        if rule.get('Requires') != None:
+            for item,value in rule['Produces'].items():
+                if item in next_state:
+                    next_state[item] += value
+                else:
+                    next_state[item] = value
         return next_state
 
     return effect
@@ -140,7 +144,7 @@ def search(graph, state, is_goal, limit, heuristic):
     return None
 
 if __name__ == '__main__':
-    with open('Crafting.json') as f:
+    with open('crafting.json') as f:
         Crafting = json.load(f)
 
     # List of items that can be in your inventory:
