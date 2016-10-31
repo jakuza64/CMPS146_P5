@@ -89,14 +89,12 @@ def make_goal_checker(goal):
     def is_goal(state):
         # This code is used in the search process and may be called millions of times.
         for key in goal:
-            check = False
             for state_key in state:
                 if state_key == key and state.get(state_key) >= goal.get(key):
-                        check = True
-            if not check:
-                return False
+                        break
+            return False
         return True
-
+        
     return is_goal
 
 
