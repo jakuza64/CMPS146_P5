@@ -1,3 +1,4 @@
+from heapq import heappush, heappop
 import json
 from collections import namedtuple, defaultdict, OrderedDict
 from timeit import default_timer as time
@@ -95,7 +96,7 @@ def make_goal_checker(goal):
         for key in goal:
             for state_key in state:
                 if state_key == key and state.get(state_key) >= goal.get(key):
-                        break
+                    break
             return False
         return True
         
@@ -113,7 +114,7 @@ def graph(state):
 
 def heuristic(state):
     # Implement your heuristic here!
-    for item,value in state:
+    for item,value in state.items():
         if item[len(item)-3:] == 'axe' and value > 1:
             return 999
         elif item == 'bench' and value > 1:
@@ -132,36 +133,33 @@ def search(graph, state, is_goal, limit, heuristic):
     # When you find a path to the goal return a list of tuples [(state, action)]
     # representing the path. Each element (tuple) of the list represents a state
     # in the path and the action that took you to this state
-    cameFrom = {}
-    openSet = set([start])
-    closedSet = set()
-    gScore = {}
-    fScore = {}
-    gScore[start] = 0
-    fScore[start] = gScore[start] + self.heuristicEstimate(start,goal)
-    while len(openSet) != 0:
-        current = self.getLowest(openSet,fScore)
-        if current == goal:
-            return self.reconstructPath(cameFrom,goal)
-        openSet.remove(current)
-        closedSet.add(current)
-        for neighbor in self.neighborNodes(current):
-            tentative_gScore = gScore[current] + self.distBetween(current,neighbor)
-            if neighbor in closedSet and tentative_gScore >= gScore[neighbor]:
-                continue
-            if neighbor not in closedSet or tentative_gScore < gScore[neighbor]:
-                cameFrom[neighbor] = current
-                gScore[neighbor] = tentative_gScore
-                fScore[neighbor] = gScore[neighbor] + self.heuristicEstimate(neighbor,goal)
-                if neighbor not in openSet:
-                    openSet.add(neighbor)
-    return 0
+    frontier = []
+    heappush(frontier, (0, state))
+    came_from = {}
+    cost_so_far = {}
+    came_from[state] = None
+    cost_so_far[state] = 0
     
-    while time() - start_time < limit:
-        gen = graph(state)
-        for i in gen:
-            for j in i:
-                print(j)
+    while time() - start_time < limit and not len(frontier) == 0:
+        #print("\n\n\n")
+        curr_priority,current = heappop(frontier)
+        print(current)
+        if is_goal(current):
+            print("Trader Joe's")
+            break
+
+        gen = graph(current)
+        for next in gen:
+            #print (next[0])
+            #print (next[1])
+            #print (next[2])
+            #print('\n')
+            new_cost = cost_so_far[current] + next[2]
+            if next[0] not in cost_so_far or new_cost < cost_so_far[next[0]]:
+                cost_so_far[next[1]] = new_cost
+                priority = new_cost + heuristic(next[1])
+                heappush(frontier, (priority, next[1]))
+                came_from[next[1]] = current
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
