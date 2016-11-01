@@ -134,7 +134,7 @@ def search(graph, state, is_goal, limit, heuristic):
     # representing the path. Each element (tuple) of the list represents a state
     # in the path and the action that took you to this state
     frontier = []
-    heappush(frontier, (0, state))
+    heappush(frontier, (0, state, 'start'))
     came_from = {}
     cost_so_far = {}
     came_from[state] = None
@@ -142,8 +142,11 @@ def search(graph, state, is_goal, limit, heuristic):
     
     while time() - start_time < limit and not len(frontier) == 0:
         #print("\n\n\n")
-        curr_priority,current = heappop(frontier)
+        # Comment goes here
+        curr_priority,current,current_action = heappop(frontier)
+        print(current_action)
         print(current)
+        print()
         if is_goal(current):
             print("Trader Joe's")
             break
@@ -158,7 +161,7 @@ def search(graph, state, is_goal, limit, heuristic):
             if next[0] not in cost_so_far or new_cost < cost_so_far[next[0]]:
                 cost_so_far[next[1]] = new_cost
                 priority = new_cost + heuristic(next[1])
-                heappush(frontier, (priority, next[1]))
+                heappush(frontier, (priority, next[1], next[0]))
                 came_from[next[1]] = current
 
     # Failed to find a path
