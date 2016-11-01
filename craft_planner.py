@@ -158,11 +158,12 @@ def search(graph, state, is_goal, limit, heuristic):
             #print (next[2])
             #print('\n')
             new_cost = cost_so_far[current] + next[2]
-            if next[0] not in cost_so_far or new_cost < cost_so_far[next[0]]:
+            if next[1] not in cost_so_far or new_cost < cost_so_far[next[1]]:
                 cost_so_far[next[1]] = new_cost
                 priority = new_cost + heuristic(next[1])
                 heappush(frontier, (priority, next[1], next[0]))
                 came_from[next[1]] = current
+            
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
