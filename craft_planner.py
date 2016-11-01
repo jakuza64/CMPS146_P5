@@ -93,11 +93,14 @@ def make_goal_checker(goal):
 
     def is_goal(state):
         # This code is used in the search process and may be called millions of times.
+        check = False
         for key in goal:
             for state_key in state:
                 if state_key == key and state.get(state_key) >= goal.get(key):
-                    break
-            return False
+                    check = True
+            if check == False:
+                return False
+            check = False
         return True
         
     return is_goal
@@ -144,9 +147,10 @@ def search(graph, state, is_goal, limit, heuristic):
         #print("\n\n\n")
         # Comment goes here
         curr_priority,current,current_action = heappop(frontier)
+        print()        
         print(current_action)
         print(current)
-        print()
+
         if is_goal(current):
             print("Trader Joe's")
             break
@@ -163,7 +167,6 @@ def search(graph, state, is_goal, limit, heuristic):
                 priority = new_cost + heuristic(next[1])
                 heappush(frontier, (priority, next[1], next[0]))
                 came_from[next[1]] = current
-            
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
