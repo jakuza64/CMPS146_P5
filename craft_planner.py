@@ -75,7 +75,7 @@ def make_effector(rule):
                     next_state[item] -= value
                     if next_state[item] == 0:
                         del next_state[item]
-        if rule.get('Requires') != None:
+        if rule.get('Produces') != None:
             for item,value in rule['Produces'].items():
                 if item in next_state:
                     next_state[item] += value
@@ -132,11 +132,12 @@ def search(graph, state, is_goal, limit, heuristic):
     # When you find a path to the goal return a list of tuples [(state, action)]
     # representing the path. Each element (tuple) of the list represents a state
     # in the path and the action that took you to this state
+    
     while time() - start_time < limit:
         gen = graph(state)
         for i in gen:
-            print(i)
-
+            for j in i:
+                print(j)
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
