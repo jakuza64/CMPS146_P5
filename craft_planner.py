@@ -115,7 +115,7 @@ def graph(state):
             yield (r.name, r.effect(state), r.cost)
 
 
-def heuristic(state):
+def heuristic(state, action):
     # Implement your heuristic here!
     for item,value in state.items():
         if item[len(item)-3:] == 'axe' and value > 1:
@@ -126,7 +126,12 @@ def heuristic(state):
             return 999
         elif item == 'furnace' and value > 1:
             return 999
-    return 0
+        elif item == 'iron_axe':
+            return 999
+
+    for recipe in all_recipes:
+        if recipe.name == action:
+            return recipe.cost
 
 def search(graph, state, is_goal, limit, heuristic):
 
@@ -142,7 +147,6 @@ def search(graph, state, is_goal, limit, heuristic):
     cost_so_far = {}
     came_from[state] = None
     cost_so_far[state] = 0
-    states_searched = []
 
     duplicates = 0
     
@@ -155,43 +159,34 @@ def search(graph, state, is_goal, limit, heuristic):
             print(time() - start_time, 'seconds.')
             print("Duplicates: " + str(duplicates))
             print(len(frontier))
-            for element in frontier:
-                duplicates = 0
-                for other_element in frontier:
-                    this = element[1]
-                    that = other_element[1]
-                    if this == that:
-                        duplicates += 1
-                if duplicates > 1: print ("there were " + (duplicates - 1).__str__() + " duplicates")
             print()
             
             final_list = []
             stuff = came_from[current]
-            print(stuff)
             length = 0
-            while stuff[0] != None:
+            while stuff != None:
                 length += 1
                 stuff = came_from[stuff[0]]
                 final_list.append(stuff)
+
+            print()
             print (cost_so_far[current])
             print (length)
+            print()
+
             return final_list
 
         gen = graph(current)
         for next in gen:
             new_cost = cost_so_far[current] + next[2]
             if next[1] not in cost_so_far or new_cost < cost_so_far[next[1]]:
-
-                if next[1] not in states_searched:
-                    states_searched.append(next[1])
-
-                    cost_so_far[next[1]] = new_cost
-                    priority = new_cost + heuristic(next[1])
-                    heappush(frontier, (priority, next[1], next[0]))
-                    came_from[next[1]] = (current,current_action)
-                else:
-                    duplicates += 1
-                    print("duplicate removed")
+                #if next[1] not in came_from.keys():
+                cost_so_far[next[1]] = new_cost
+                priority = new_cost + heuristic(next[1], next[0])
+                heappush(frontier, (priority, next[1], next[0]))
+                came_from[next[1]] = (current,current_action)
+                #else:
+                #    duplicates += 1
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
