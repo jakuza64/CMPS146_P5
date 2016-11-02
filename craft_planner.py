@@ -126,6 +126,8 @@ def heuristic(state, action):
             return 999
         elif item == 'furnace' and value > 1:
             return 999
+
+        #This item has no utility
         elif item == 'iron_axe' and value > 0:
             return 999
 
@@ -148,8 +150,7 @@ def search(graph, state, is_goal, limit, heuristic):
     came_from[state] = None
     cost_so_far[state] = 0
     
-    #time() - start_time < limit and
-    while not len(frontier) == 0:
+    while time() - start_time < limit and not len(frontier) == 0:
 
         curr_priority,current,current_action = heappop(frontier)
         
@@ -178,7 +179,6 @@ def search(graph, state, is_goal, limit, heuristic):
         for next in gen:
             new_cost = cost_so_far[current] + next[2]
             if cost_so_far.get(next[1]) == None or new_cost < cost_so_far[next[1]]:
-                #if next[1] not in came_from.keys():
                 cost_so_far[next[1]] = new_cost
                 priority = new_cost + heuristic(next[1], next[0])
                 heappush(frontier, (priority, next[1], next[0]))
