@@ -195,6 +195,7 @@ def search(graph, state, is_goal, limit, heuristic):
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
+    print("Duplicates: " + str(duplicates))
     print("Failed to find a path from", state, 'within time limit.')
     return None
 
