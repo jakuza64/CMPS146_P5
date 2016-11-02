@@ -142,31 +142,56 @@ def search(graph, state, is_goal, limit, heuristic):
     cost_so_far = {}
     came_from[state] = None
     cost_so_far[state] = 0
+    states_searched = []
+
+    duplicates = 0
     
     while time() - start_time < limit and not len(frontier) == 0:
-        #print("\n\n\n")
-        # Comment goes here
-        curr_priority,current,current_action = heappop(frontier)
-        print()        
-        print(current_action)
-        print(current)
 
+        curr_priority,current,current_action = heappop(frontier)
+        
         if is_goal(current):
-            print("Trader Joe's")
-            break
+            print()
+            print(time() - start_time, 'seconds.')
+            print("Duplicates: " + str(duplicates))
+            print(len(frontier))
+            for element in frontier:
+                duplicates = 0
+                for other_element in frontier:
+                    this = element[1]
+                    that = other_element[1]
+                    if this == that:
+                        duplicates += 1
+                if duplicates > 1: print ("there were " + (duplicates - 1).__str__() + " duplicates")
+            print()
+            
+            final_list = []
+            stuff = came_from[current]
+            print(stuff)
+            length = 0
+            while stuff[0] != None:
+                length += 1
+                stuff = came_from[stuff[0]]
+                final_list.append(stuff)
+            print (cost_so_far[current])
+            print (length)
+            return final_list
 
         gen = graph(current)
         for next in gen:
-            #print (next[0])
-            #print (next[1])
-            #print (next[2])
-            #print('\n')
             new_cost = cost_so_far[current] + next[2]
             if next[1] not in cost_so_far or new_cost < cost_so_far[next[1]]:
-                cost_so_far[next[1]] = new_cost
-                priority = new_cost + heuristic(next[1])
-                heappush(frontier, (priority, next[1], next[0]))
-                came_from[next[1]] = current
+
+                if next[1] not in states_searched:
+                    states_searched.append(next[1])
+
+                    cost_so_far[next[1]] = new_cost
+                    priority = new_cost + heuristic(next[1])
+                    heappush(frontier, (priority, next[1], next[0]))
+                    came_from[next[1]] = (current,current_action)
+                else:
+                    duplicates += 1
+                    print("duplicate removed")
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')

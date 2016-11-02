@@ -1,9 +1,8 @@
 {
  "Initial": {
-   "plank": 1
   }, 
  "Goal": {
-   "plank": 1
+   "furnace": 1
  },
  "Items": [
    "bench", 
