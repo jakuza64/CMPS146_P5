@@ -126,7 +126,7 @@ def heuristic(state, action):
             return 999
         elif item == 'furnace' and value > 1:
             return 999
-        elif item == 'iron_axe':
+        elif item == 'iron_axe' and value > 0:
             return 999
 
     for recipe in all_recipes:
@@ -147,18 +147,16 @@ def search(graph, state, is_goal, limit, heuristic):
     cost_so_far = {}
     came_from[state] = None
     cost_so_far[state] = 0
-
-    duplicates = 0
     
-    while time() - start_time < limit and not len(frontier) == 0:
+    #time() - start_time < limit and
+    while not len(frontier) == 0:
 
         curr_priority,current,current_action = heappop(frontier)
         
         if is_goal(current):
             print()
             print(time() - start_time, 'seconds.')
-            print("Duplicates: " + str(duplicates))
-            print(len(frontier))
+            print("Length of frontier: " + str(len(frontier)))
             print()
             
             final_list = []
@@ -166,9 +164,9 @@ def search(graph, state, is_goal, limit, heuristic):
             length = 0
             while stuff != None:
                 length += 1
-                stuff = came_from[stuff[0]]
                 final_list.append(stuff)
-
+                stuff = came_from[stuff[0]]
+                
             print()
             print (cost_so_far[current])
             print (length)
@@ -179,14 +177,12 @@ def search(graph, state, is_goal, limit, heuristic):
         gen = graph(current)
         for next in gen:
             new_cost = cost_so_far[current] + next[2]
-            if next[1] not in cost_so_far or new_cost < cost_so_far[next[1]]:
+            if cost_so_far.get(next[1]) == None or new_cost < cost_so_far[next[1]]:
                 #if next[1] not in came_from.keys():
                 cost_so_far[next[1]] = new_cost
                 priority = new_cost + heuristic(next[1], next[0])
                 heappush(frontier, (priority, next[1], next[0]))
                 came_from[next[1]] = (current,current_action)
-                #else:
-                #    duplicates += 1
 
     # Failed to find a path
     print(time() - start_time, 'seconds.')
